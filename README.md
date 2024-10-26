@@ -5,4 +5,4 @@ run on terminal:
 
 
 . .venv/bin/activate
-pip install Flask  (pode ser pip3)
+pip install -r requirements.txt  (pode ser pip3)
