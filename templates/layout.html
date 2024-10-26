@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}KebabStyle{% endblock %}</title>
+    <title>{% block title %}KebabDrip{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <nav>
         <a href="{{ url_for('home') }}">Home</a> |
-        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('status') }}">Status</a>
     </nav>
     <div class="content">
         {% block content %}{% endblock %}
