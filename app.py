@@ -33,6 +33,10 @@ def upload():
 
 
 
+@app.route('/format')
+def format():
+    return render_template('format.html')
+
 @app.route('/api/buy', methods=['POST'])
 def api_buy():
     
