@@ -35,13 +35,13 @@ class StockManager:
                 'Fio': 0.4,
                 'Poliester': 1.3,
             },
-            'Camisola': {
+            'Calcoes': {
                 'Tecido': 0.8,
                 'Algodao': 0.7,
                 'Fio': 0.4,
                 'Poliester': 1.4,
             },
-            'Calcoes': {
+            'Camisola': {
                 'Tecido': 0.5,
                 'Algodao': 0.35,
                 'Fio': 0.5,
@@ -110,21 +110,37 @@ class StockManager:
             item = encomenda['type']
             quantity = encomenda['qty']
             size = encomenda['size']
-
+            flagcontinue = True
+            quantityPerMaterial = dict()
             # agora tenho de mexer no meu inventário e chamar aquela porra toda 
             # ver também cada material para cada peça
             for key, value in self.clothing_sizes_material[self.tipos_dict[item]].items(): # vou ver cada material para cada peça
                 material = key
-                quantity = value * self.sizes_to_ratio[size]
-                self.stock_levels[material] -= quantity
+                quantityPerItem = value * self.sizes_to_ratio[size]
+                quantityPerMaterial[key] = round(quantityPerItem * quantity, 2)
+                if(quantityPerMaterial[key] > self.stock_levels[material]):
+                    print("NOT ENOUGH MATERIAL")
+                    print('DENYING ORDER')
+                    flagcontinue = False
+                    
+            if not flagcontinue:
+               self.nextday()
+               continue
 
-                if(self.stock_levels[material] <= self.order_point()):
+            for key in quantityPerMaterial:
+                print(f"{key}: {quantityPerMaterial[key]}")
+
+                self.stock_levels[key] -= quantityPerMaterial[key]
+
+                print(f"A quantidade de {material} que iremos necessitar para clothing item {self.tipos_dict[item]} será de {quantityPerMaterial}")
+
+
+                if(self.stock_levels[material] <= self.order_point(material)):
                     # vou ter de chamar a cena do tomy  
                     pass
-
+            
             self.nextday()
 
 
 manager = StockManager()
-print(manager.enconomic_order_quantity())
-print(manager.order_point('Tecido'))
+print(manager.manage_order([{'type': 3, 'qty': 2, 'size': 4}]))
