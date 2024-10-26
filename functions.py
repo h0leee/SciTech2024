@@ -119,11 +119,13 @@ class StockManager:
                 quantityPerItem = value * self.sizes_to_ratio[size]
                 quantityPerMaterial[key] = round(quantityPerItem * quantity, 2)
                 if(quantityPerMaterial[key] > self.stock_levels[material]):
-                    print("NOT ENOUGH MATERIAL")
-                    print('DENYING ORDER')
+                    
                     flagcontinue = False
+                    break
                     
             if not flagcontinue:
+               print("NOT ENOUGH MATERIAL")
+               print('DENYING ORDER')
                self.nextday()
                continue
 
@@ -143,4 +145,4 @@ class StockManager:
 
 
 manager = StockManager()
-print(manager.manage_order([{'type': 3, 'qty': 2, 'size': 4}]))
+manager.manage_order([{'type': 3, 'qty': 100000000, 'size': 4}])
