@@ -148,15 +148,24 @@ order_no = 1
 
 
 def create_order(products, date):
+    print('hey')
+    print(products)
+    print(date)
+    print('hey')
+
     global order_no
 
     items = []
+    placeholder = dict()
     price = 0
     for p in products:
-        items.append({'item': p['product'],
-              'quantity': p['qty'],
-              'unit_price':preco[p['product']],
-              'subtotal': preco[p['product']] * p['qty']})
+        placeholder['item'] = p['product']
+        placeholder['quantity'] = p['qty']
+        placeholder['unit_price'] = preco[p['product']]
+        placeholder['subtotal'] = preco[p['product']] * p['qty']
+
+        print(placeholder)
+        items.append(placeholder)
         price += preco[p['product']] * p['qty']
 
 
@@ -176,5 +185,3 @@ def create_order(products, date):
     order_no+= 1
 
 
-create_order([{'product': 'Algodao', 'qty': 3}], datetime.today())
-create_order([{'product': 'Poliester', 'qty': 10}], datetime.today())
