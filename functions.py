@@ -28,30 +28,30 @@ class StockManager:
             3: 'Poliester'
         }
 
-        self.clothing_sizes_price = {
+        self.clothing_sizes_material = {
             'Tshirt': {
-                self.material_to_number['Tecido']: 1,
-                self.material_to_number['Algodao']: 0.8,
-                self.material_to_number['Fio']: 0.4,
-                self.material_to_number['Poliester']: 1.3,
+                'Tecido': 1,
+                'Algodao': 0.8,
+                'Fio': 0.4,
+                'Poliester': 1.3,
             },
             'Camisola': {
-                self.material_to_number['Tecido']: 0.8,
-                self.material_to_number['Algodao']: 0.7,
-                self.material_to_number['Fio']: 0.4,
-                self.material_to_number['Poliester']: 1.4,
+                'Tecido': 0.8,
+                'Algodao': 0.7,
+                'Fio': 0.4,
+                'Poliester': 1.4,
             },
             'Calcoes': {
-                self.material_to_number['Tecido']: 0.5,
-                self.material_to_number['Algodao']: 0.35,
-                self.material_to_number['Fio']: 0.5,
-                self.material_to_number['Poliester']: 1.15,
+                'Tecido': 0.5,
+                'Algodao': 0.35,
+                'Fio': 0.5,
+                'Poliester': 1.15,
             },
             'Calcas': {
-                self.material_to_number['Tecido']: 1.2,
-                self.material_to_number['Algodao']: 0.95,
-                self.material_to_number['Fio']: 0.35,
-                self.material_to_number['Poliester']: 1.5,
+                'Tecido': 1.2,
+                'Algodao': 0.95,
+                'Fio': 0.35,
+                'Poliester': 1.5,
             },
         }
 
@@ -70,13 +70,21 @@ class StockManager:
             3: 'L',
             4: 'XL'
         }
+
+        self.sizes_to_ratio = {
+            0: 0.5,
+            1: 0.75,
+            2: 1,
+            3: 1.5,
+            4: 2,
+        }
     
 
         self.stock_levels = {
-            self.material_to_number['Tecido']: 2200,
-            self.material_to_number['Algodao']: 2200,
-            self.material_to_number['Fio']: 2200,
-            self.material_to_number['Poliester']: 2200,
+            'Tecido': 2200,
+            'Algodao': 2200,
+            'Fio': 2200,
+            'Poliester': 2200,
         }
 
     def get_stock(self, material):
@@ -95,8 +103,26 @@ class StockManager:
     def enconomic_order_quantity(self):
         return round(math.sqrt((2*self.anual_demand*self.order_cost)/self.posession_cost))
     
+    
     def manage_order(self, order):
-        return ""
+
+        for encomenda in order:
+            item = encomenda['type']
+            quantity = encomenda['qty']
+            size = encomenda['size']
+
+            # agora tenho de mexer no meu inventário e chamar aquela porra toda 
+            # ver também cada material para cada peça
+            for key, value in self.clothing_sizes_material[self.tipos_dict[item]].items(): # vou ver cada material para cada peça
+                material = key
+                quantity = value * self.sizes_to_ratio[size]
+                self.stock_levels[material] -= quantity
+
+                if(self.stock_levels[material] <= self.order_point()):
+                    # vou ter de chamar a cena do tomy  
+                    pass
+
+            self.nextday()
 
 
 manager = StockManager()
