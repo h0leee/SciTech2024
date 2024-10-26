@@ -129,7 +129,6 @@ button[type="submit"]:hover {
     background-color: var(--color-response-bg);
     border: 1px solid var(--color-response-border);
     border-radius: 5px;
-    display: none; /* Hidden by default, can be displayed via JavaScript */
 }
 
 /* Responsive design */
