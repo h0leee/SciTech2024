@@ -13,8 +13,35 @@
         <a href="{{ url_for('format') }}">Formatted Input</a> |
         <a href="{{ url_for('status') }}">Status</a>
     </nav>
+    <div id="dateDisplay">Loading date...</div>
+
     <div class="content">
         {% block content %}{% endblock %}
     </div>
+    <script>
+        async function fetchDate() {
+            try {
+                const response = await fetch('/api/date', { method: 'POST' });
+        
+                // Check if the request was successful
+                if (!response.ok) {
+                    throw new Error('Failed to fetch the date');
+                }
+        
+                // Parse the JSON response
+                const data = await response.json();
+        
+                // Update the HTML with the date
+                document.getElementById('dateDisplay').textContent = data.date;
+            } catch (error) {
+                console.error('Error fetching date:', error);
+                document.getElementById('dateDisplay').textContent = 'Error fetching date';
+            }
+        }
+        
+        // Fetch the date initially and then every 10 seconds
+        fetchDate(); // Initial fetch
+        setInterval(fetchDate, 10000); // Fetch every 10 seconds
+    </script>
 </body>
 </html>

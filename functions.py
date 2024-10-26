@@ -149,6 +149,3 @@ class StockManager:
             
             self.nextday()
 
-
-manager = StockManager()
-manager.manage_order([{'type': 3, 'qty': 100000000, 'size': 4}])

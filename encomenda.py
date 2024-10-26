@@ -174,7 +174,3 @@ def create_order(products, date):
     preencher_pdf(input_pdf_path, output_pdf_path, dados)
 
     order_no+= 1
-
-
-create_order([{'product': 'Algodao', 'qty': 3}], datetime.today())
-create_order([{'product': 'Poliester', 'qty': 10}], datetime.today())
