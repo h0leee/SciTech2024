@@ -45,7 +45,7 @@ def api_buy():
 
 
 @app.route('/api/buyformat', methods=['POST'])
-def api_buy():
+def api_buy_format():
     
     data = request.form.get('data')
 
