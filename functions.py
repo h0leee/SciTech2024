@@ -1,19 +1,20 @@
 import math
 import encomenda as enc
-from datetime import datetime, timedelta
+from datetime import date, timedelta
+
 
 
 class StockManager:
     def __init__(self):
         self.initial_stock = 2200
         self.anual_demand = 50000
-        self.order_cost = 10
-        self.posession_cost = 0.7
+        self.order_cost = 10 # diferenciar com isto
+        self.posession_cost = 0.7 # diferenciar com isto
         self.delivery_time = 7
         self.security_stock = 1000
         self.daily_demand = self.anual_demand/365
 
-        self.date = datetime.today()
+        self.date = date.today()
 
         self.material_to_number = {
             'Tecido': 0,
@@ -96,11 +97,11 @@ class StockManager:
         if material not in self.material_to_number:
             return "Material desconhecido."
         
-        orderPoint = round((self.daily_demand * self.delivery_time) + self.security_stock)
+        orderPoint = round(((self.daily_demand * self.delivery_time) + self.security_stock), 2)
         return orderPoint
     
     def economic_order_quantity(self):
-        return round(math.sqrt((2*self.anual_demand*self.order_cost)/self.posession_cost))
+        return round(math.sqrt((2*self.anual_demand*self.order_cost)/self.posession_cost), 2)
     
     def get_stock_levels(self):
         for key, value in self.stock_levels.items():
@@ -110,6 +111,7 @@ class StockManager:
     def manage_order(self, order):
 
         for encomenda in order:
+            print('Sabendo que temos estes materiais')
             self.get_stock_levels()
 
             item = encomenda['type']
@@ -138,10 +140,6 @@ class StockManager:
             materialsForOrder = list()
 
             for material in quantityPerMaterial:
-                print(material)
-                print('quantityPerMaterial')
-                print(quantityPerMaterial)
-                print('quantityPerMaterial')
                 print(f"{material}: {quantityPerMaterial[material]}")
 
                 self.stock_levels[material] -= quantityPerMaterial[material]
@@ -166,4 +164,3 @@ class StockManager:
 
 manager = StockManager()
 manager.manage_order([{'type': 3, 'qty': 2000, 'size': 4}, {'type': 1, 'qty': 200, 'size': 2}])
-manager.get_stock_levels()
