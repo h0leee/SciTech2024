@@ -148,21 +148,25 @@ order_no = 1
 
 
 def create_order(products, date):
+
     global order_no
 
     items = []
     price = 0
     for p in products:
-        items.append({'item': p['product'],
-              'quantity': p['qty'],
-              'unit_price':preco[p['product']],
-              'subtotal': preco[p['product']] * p['qty']})
+        placeholder = dict()
+        placeholder['item'] = p['product']
+        placeholder['quantity'] = p['qty']
+        placeholder['unit_price'] = preco[p['product']]
+        placeholder['subtotal'] = preco[p['product']] * p['qty']
+
+        items.append(placeholder)
         price += preco[p['product']] * p['qty']
 
 
     dados = {
         'order_number': order_no,
-        'date': '26/10/2024', # update date
+        'date': date.strftime("%d/%m/%Y"),
         'items': items,
         'total': price
     }

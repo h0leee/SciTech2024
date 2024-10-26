@@ -1,19 +1,20 @@
 import math
-import encomenda
-from datetime import datetime, timedelta
+import encomenda as enc
+from datetime import date, timedelta
+
 
 
 class StockManager:
     def __init__(self):
         self.initial_stock = 2200
         self.anual_demand = 50000
-        self.order_cost = 10
-        self.posession_cost = 0.7
+        self.order_cost = 10 # diferenciar com isto
+        self.posession_cost = 0.7 # diferenciar com isto
         self.delivery_time = 7
         self.security_stock = 1000
         self.daily_demand = self.anual_demand/365
 
-        self.date = datetime.today()
+        self.date = date.today()
 
         self.material_to_number = {
             'Tecido': 0,
@@ -88,8 +89,6 @@ class StockManager:
             'Poliester': 2200,
         }
 
-    def get_stock(self, material):
-        return self.stock_levels[self.number_to_material[material]]
 
     def nextday(self):
         self.date = self.date + timedelta(days=1)
@@ -98,16 +97,23 @@ class StockManager:
         if material not in self.material_to_number:
             return "Material desconhecido."
         
-        orderPoint = round((self.daily_demand * self.delivery_time) + self.security_stock)
+        orderPoint = round(((self.daily_demand * self.delivery_time) + self.security_stock), 2)
         return orderPoint
     
-    def enconomic_order_quantity(self):
-        return round(math.sqrt((2*self.anual_demand*self.order_cost)/self.posession_cost))
+    def economic_order_quantity(self):
+        return round(math.sqrt((2*self.anual_demand*self.order_cost)/self.posession_cost), 2)
+    
+    def get_stock_levels(self):
+        for key, value in self.stock_levels.items():
+                print(f"Para o material {key} temos {value} m2")
     
     
     def manage_order(self, order):
 
         for encomenda in order:
+            print('Sabendo que temos estes materiais')
+            self.get_stock_levels()
+
             item = encomenda['type']
             quantity = encomenda['qty']
             size = encomenda['size']
@@ -118,8 +124,10 @@ class StockManager:
                 material = key
                 quantityPerItem = value * self.sizes_to_ratio[size]
                 quantityPerMaterial[key] = round(quantityPerItem * quantity, 2)
-                if(quantityPerMaterial[key] > self.stock_levels[material]):
-                    
+
+
+                if(quantityPerMaterial[key] > self.stock_levels[material]): # se fôssemos ficar com material negativo
+                    print(f'nao há {material} suficiente ')
                     flagcontinue = False
                     break
                     
@@ -129,23 +137,26 @@ class StockManager:
                self.nextday()
                continue
 
-            for key in quantityPerMaterial:
-                print(f"{key}: {quantityPerMaterial[key]}")
+            materialsForOrder = list()
 
-                self.stock_levels[key] -= quantityPerMaterial[key]
+            for material in quantityPerMaterial:
+                print(f"{material}: {quantityPerMaterial[material]}")
 
-                print(f"A quantidade de {material} que iremos necessitar para clothing item {self.tipos_dict[item]} será de {quantityPerMaterial}")
+                self.stock_levels[material] -= quantityPerMaterial[material]
+
+                print(f"A quantidade de {material} que iremos necessitar para clothing item {self.tipos_dict[item]} será de {quantityPerMaterial[material]}")
 
 
-                if(self.stock_levels[material] <= self.order_point(material)):
+                if(self.stock_levels[material] <= self.order_point(material)): # temos de fazer order
                     order = {
                         'product': material,
-                        'qty': quantity
+                        'qty': self.economic_order_quantity()
                     }
 
-                    encomenda.create_order(order, self.date)
+                    materialsForOrder.append(order)
 
-                    # vou ter de chamar a cena do tomy  
+                    
+            enc.create_order(materialsForOrder, self.date)
+            
             
             self.nextday()
-
