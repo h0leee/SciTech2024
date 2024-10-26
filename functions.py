@@ -1,4 +1,6 @@
 import math
+from datetime import datetime, timedelta
+
 
 class StockManager:
     def __init__(self):
@@ -9,6 +11,8 @@ class StockManager:
         self.delivery_time = 7
         self.security_stock = 1000
         self.daily_demand = self.anual_demand/365
+
+        self.date = datetime.today()
 
         self.material_to_number = {
             'Tecido': 0,
@@ -66,13 +70,7 @@ class StockManager:
             3: 'L',
             4: 'XL'
         }
-
-        self.price_per_square_meter = {
-            self.material_to_number['Tecido']: 7,
-            self.material_to_number['Algodao']: 5.5,
-            self.material_to_number['Fio']: 4.5,
-            self.material_to_number['Poliester']: 10
-        }
+    
 
         self.stock_levels = {
             self.material_to_number['Tecido']: 2200,
@@ -84,6 +82,9 @@ class StockManager:
     def get_stock(self, material):
         return self.stock_levels[self.number_to_material[material]]
 
+    def nextday(self):
+        self.date = self.date + timedelta(days=1)
+
     def order_point(self, material):
         if material not in self.material_to_number:
             return "Material desconhecido."
@@ -93,7 +94,10 @@ class StockManager:
     
     def enconomic_order_quantity(self):
         return round(math.sqrt((2*self.anual_demand*self.order_cost)/self.posession_cost))
-        
+    
+    def manage_order(self, order):
+        return ""
+
 
 manager = StockManager()
 print(manager.enconomic_order_quantity())
