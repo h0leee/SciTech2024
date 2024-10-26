@@ -1,4 +1,5 @@
 import math
+import encomenda
 from datetime import datetime, timedelta
 
 
@@ -112,8 +113,7 @@ class StockManager:
             size = encomenda['size']
             flagcontinue = True
             quantityPerMaterial = dict()
-            # agora tenho de mexer no meu inventário e chamar aquela porra toda 
-            # ver também cada material para cada peça
+            
             for key, value in self.clothing_sizes_material[self.tipos_dict[item]].items(): # vou ver cada material para cada peça
                 material = key
                 quantityPerItem = value * self.sizes_to_ratio[size]
@@ -138,8 +138,14 @@ class StockManager:
 
 
                 if(self.stock_levels[material] <= self.order_point(material)):
+                    order = {
+                        'product': material,
+                        'qty': quantity
+                    }
+
+                    encomenda.create_order(order, self.date)
+
                     # vou ter de chamar a cena do tomy  
-                    pass
             
             self.nextday()
 
