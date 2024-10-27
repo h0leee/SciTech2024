@@ -6,6 +6,9 @@ from datetime import date, timedelta
 
 class StockManager:
     def __init__(self):
+        self.history = dict()
+        self.encomendas = []
+        self.refill = {'Tecido':-1, 'Algodao': -1, 'Fio': -1, 'Poliester': -1}
         self.initial_stock = 2200
         self.anual_demand = 50000
         self.order_cost = 10 # diferenciar com isto
@@ -35,25 +38,25 @@ class StockManager:
                 'Tecido': 1,
                 'Algodao': 0.8,
                 'Fio': 0.4,
-                'Poliester': 1.3,
+                'Poliester': 1,
             },
             'Calcoes': {
                 'Tecido': 0.8,
                 'Algodao': 0.7,
                 'Fio': 0.4,
-                'Poliester': 1.4,
+                'Poliester': 0.8,
             },
             'Camisola': {
                 'Tecido': 0.5,
                 'Algodao': 0.35,
                 'Fio': 0.5,
-                'Poliester': 1.15,
+                'Poliester': 0.5,
             },
             'Calcas': {
                 'Tecido': 1.2,
                 'Algodao': 0.95,
                 'Fio': 0.35,
-                'Poliester': 1.5,
+                'Poliester': 1.2,
             },
         }
 
@@ -119,14 +122,21 @@ class StockManager:
             size = encomenda['size']
             flagcontinue = True
             quantityPerMaterial = dict()
+            for i in self.refill:
+                if self.refill[i] != -1:
+                    self.refill[i] -= 1
+                if self.refill[i] == 0:
+                    self.stock_levels[i] += self.economic_order_quantity()
+                    self.refill[i] = -1
             
+
             for key, value in self.clothing_sizes_material[self.tipos_dict[item]].items(): # vou ver cada material para cada peça
                 material = key
                 quantityPerItem = value * self.sizes_to_ratio[size]
                 quantityPerMaterial[key] = round(quantityPerItem * quantity, 2)
 
 
-                if(quantityPerMaterial[key] > self.stock_levels[material]): # se fôssemos ficar com material negativo
+                if quantityPerMaterial[key] > self.stock_levels[material]: # se fôssemos ficar com material negativo
                     print(f'nao há {material} suficiente ')
                     flagcontinue = False
                     break
@@ -152,11 +162,18 @@ class StockManager:
                         'product': material,
                         'qty': self.economic_order_quantity()
                     }
+                    if(self.refill[material] != -1):
+                        continue
+                    
+                    self.refill[material] = 7
+                
 
                     materialsForOrder.append(order)
 
-                    
-            enc.create_order(materialsForOrder, self.date)
-            
+            if len(materialsForOrder) != 0:   
+                enc.create_order(materialsForOrder, self.date)
+                self.encomendas.append((self.date.strftime('%Y-%m-%d'), materialsForOrder.copy()))
+
+            self.history[self.date.strftime('%Y-%m-%d')] = self.stock_levels.copy()
             
             self.nextday()

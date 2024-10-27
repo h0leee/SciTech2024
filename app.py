@@ -41,6 +41,7 @@ def upload():
 def format():
     return render_template('format.html')
 
+
 @app.route('/api/buy', methods=['POST'])
 def api_buy():
     
@@ -73,7 +74,7 @@ def api_buy():
 @app.route('/api/date', methods=['POST'])
 def api_date():
     date = manager.date
-    print(date.date())
+    print(date)
     return jsonify({'date': date}), 200
 
 
@@ -114,6 +115,23 @@ def api_upload():
         'message': f'File "{file.filename}" read successfully! {file_content}',
     }
     return jsonify(response), 200
+
+
+@app.route('/api/history', methods=['GET'])
+def api_history():
+
+    return jsonify(manager.history)
+
+@app.route('/api/encomenda', methods=['GET'])
+def api_encomenda():
+    return jsonify(manager.encomendas)
+
+
+@app.route('/api/atual', methods=['GET'])
+def api_atual():
+    return jsonify(manager.stock_levels)
+
+
 
 
 if __name__ == '__main__':

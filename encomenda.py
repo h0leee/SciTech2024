@@ -1,6 +1,8 @@
 import fitz  # PyMuPDF
 from datetime import datetime, timedelta
 
+
+
 preco = {'Tecido': 7,
          'Algodao': 5.5,
          'Fio': 4.5,
